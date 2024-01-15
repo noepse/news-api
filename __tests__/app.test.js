@@ -23,6 +23,7 @@ describe('GET /api/topics', ()=>{
         .then((data)=>{
             const topicsData = data.body.topics;
             expect(Array.isArray(topicsData)).toBe(true);
+            expect(topicsData.length > 0).toBe(true);
             topicsData.forEach((topic)=>{
                 expect(typeof topic.slug).toBe('string');
                 expect(typeof topic.description).toBe('string')
