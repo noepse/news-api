@@ -30,3 +30,20 @@ describe('GET /api/topics', ()=>{
         })
     })
 })
+
+describe('GET /api', ()=>{
+    test('200: responds with object containing relevant keys for each endpoint', ()=>{
+        return request(app)
+        .get('/api')
+        .then(({body})=>{
+            expect(typeof body.endpoints).toBe('object')
+
+            for (const key in body.endpoints){
+                console.log(key)
+                expect(typeof body.endpoints[key].description).toBe('string')
+                expect(Array.isArray(body.endpoints[key].queries)).toBe(true)
+                expect(typeof body.endpoints[key].exampleResponse).toBe('object')
+            }
+        })  
+    })
+})
