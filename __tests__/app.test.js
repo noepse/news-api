@@ -8,6 +8,24 @@ beforeAll(()=>{
     return seed(testData);
 })
 
+describe('GET /api', ()=>{
+    test('200: responds with object containing relevant keys for each endpoint', ()=>{
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body})=>{
+            expect(typeof body.endpoints).toBe('object')
+            expect(endpoints).toMatchObject(body.endpoints)
+            
+            for (const key in body.endpoints){
+                expect(typeof body.endpoints[key].description).toBe('string')
+                expect(Array.isArray(body.endpoints[key].queries)).toBe(true)
+                expect(typeof body.endpoints[key].exampleResponse).toBe('object')
+            }
+        })  
+    })
+});
+
 describe('GET /api/topics', ()=>{
     test('404: reponds with endpoint not found when unknown path entered', ()=>{
         return request(app)
@@ -33,23 +51,28 @@ describe('GET /api/topics', ()=>{
     })
 })
 
-describe('GET /api', ()=>{
-    test('200: responds with object containing relevant keys for each endpoint', ()=>{
+describe('GET /api/articles', ()=>{
+    test('200: responds with an array of articles', ()=>{
         return request(app)
-        .get('/api')
+        .get('/api/articles')
         .expect(200)
         .then(({body})=>{
-            expect(typeof body.endpoints).toBe('object')
-            expect(endpoints).toMatchObject(body.endpoints)
-            
-            for (const key in body.endpoints){
-                expect(typeof body.endpoints[key].description).toBe('string')
-                expect(Array.isArray(body.endpoints[key].queries)).toBe(true)
-                expect(typeof body.endpoints[key].exampleResponse).toBe('object')
-            }
-        })  
+            expect(Array.isArray(body.articles)).toBe(true);
+            expect(body.articles.length > 0).toBe(true);
+            expect(body.articles).toBeSortedBy('created_at', {descending: true});
+            body.articles.forEach((article)=>{
+                expect(typeof article.title).toBe('string')
+                expect(typeof article.article_id).toBe('number')
+                expect(typeof article.topic).toBe('string')
+                expect(typeof article.created_at).toBe('string')
+                expect(typeof article.votes).toBe('number')
+                expect(typeof article.article_img_url).toBe('string')
+                expect(typeof article.comment_count).toBe('number')
+                expect(article).not.toHaveProperty('body')
+            })
+        })
     })
-});
+})
 
 describe('GET /api/articles/:article_id', ()=>{
     test('200: responds with an article object with relevant properties', ()=>{
@@ -73,12 +96,12 @@ describe('GET /api/articles/:article_id', ()=>{
             expect(body.article.article_id).toBe(5);
         });
     });
-    test('400: responds with invalid id if invalid  id entered', ()=>{
+    test('400: responds with invalid id if invalid id entered', ()=>{
         return request(app)
         .get('/api/articles/banana')
         .expect(400)
         .then(({body})=>{
-            expect(body).toEqual({msg: 'invalid id entered'})
+            expect(body).toEqual({msg: 'invalid id'})
         })
     });
     test('404: responds with article not found if valid but non-existent id entered', ()=>{
@@ -91,34 +114,61 @@ describe('GET /api/articles/:article_id', ()=>{
     });
 });
 
-describe('GET /api/articles', ()=>{
-    test('200: responds with an array of articles', ()=>{
+describe('GET /api/articles/:article_id/comments', ()=>{
+    test('200: responds with an array of comments for a given article id', ()=>{
+        const expectedOutput = [ 
+          {
+            comment_id: 15,
+            body: "I am 100% sure that we're not completely sure.",
+            votes: 1,
+            author: "butter_bridge",
+            article_id: 5,
+            created_at: "2020-11-24T00:08:00.000Z",
+          },
+          {
+            comment_id: 14,
+            body: "What do you see? I have no idea where this will lead us. This place I speak of, is known as the Black Lodge.",
+            votes: 16,
+            author: "icellusedkars",
+            article_id: 5,
+            created_at: "2020-06-09T05:00:00.000Z",
+          }]
         return request(app)
-        .get('/api/articles')
+        .get('/api/articles/5/comments')
         .expect(200)
         .then(({body})=>{
-            expect(Array.isArray(body.articles)).toBe(true);
-            expect(body.articles.length > 0).toBe(true);
-            expect(body.articles).toBeSortedBy('created_at', {descending: true});
-            body.articles.forEach((article)=>{
-                expect(typeof article.title).toBe('string')
-                expect(typeof article.article_id).toBe('number')
-                expect(typeof article.topic).toBe('string')
-                expect(typeof article.created_at).toBe('string')
-                expect(typeof article.votes).toBe('number')
-                expect(typeof article.article_img_url).toBe('string')
-                expect(typeof article.comment_count).toBe('number')
-                expect(article).not.toHaveProperty('body')
-
-                //author
-// title
-// article_id
-// topic
-// created_at
-// votes
-// article_img_url
-// comment_count, which is the total count of all the comments with this article_id. You should make use of queries to the database in order to achieve this.
-            })
+            expect(Array.isArray(body.comments)).toBe(true);
+            expect(body.comments).toBeSortedBy('created_at', {descending: true})
+            expect(body.comments).toMatchObject(expectedOutput);
+            expect(body.comments.length).toBe(2);
+            expect(body.comments[0].article_id).toBe(5)
+            expect(body.comments[1].article_id).toBe(5)
+        })
+    });
+    test('200: responds with an empty array if a valid article id with no comments is entered', ()=>{
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({body})=>{
+            expect(Array.isArray(body.comments)).toBe(true);
+            expect(body.comments.length).toBe(0);
         })
     })
+    test('400: responds with invalid id if invalid article id entered', ()=>{
+        return request(app)
+        .get('/api/articles/notanid/comments')
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'invalid id'})
+        })
+    })
+    test('404: responds with article not found if valid but non-existent article id entered', ()=>{
+        return request(app)
+        .get('/api/articles/9999/comments')
+        .expect(404)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'article not found'})
+        })
+    });
 })
+
