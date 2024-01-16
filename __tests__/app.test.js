@@ -90,3 +90,35 @@ describe('GET /api/articles/:article_id', ()=>{
         })
     });
 });
+
+describe('GET /api/articles', ()=>{
+    test('200: responds with an array of articles', ()=>{
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body})=>{
+            expect(Array.isArray(body.articles)).toBe(true);
+            expect(body.articles.length > 0).toBe(true);
+            expect(body.articles).toBeSortedBy('created_at', {descending: true});
+            body.articles.forEach((article)=>{
+                expect(typeof article.title).toBe('string')
+                expect(typeof article.article_id).toBe('number')
+                expect(typeof article.topic).toBe('string')
+                expect(typeof article.created_at).toBe('string')
+                expect(typeof article.votes).toBe('number')
+                expect(typeof article.article_img_url).toBe('string')
+                expect(typeof article.comment_count).toBe('number')
+                expect(article).not.toHaveProperty('body')
+
+                //author
+// title
+// article_id
+// topic
+// created_at
+// votes
+// article_img_url
+// comment_count, which is the total count of all the comments with this article_id. You should make use of queries to the database in order to achieve this.
+            })
+        })
+    })
+})
