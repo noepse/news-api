@@ -2,6 +2,7 @@ const request = require('supertest');
 const app = require('../app.js');
 const testData = require('../db/data/test-data/index.js')
 const seed = require('../db/seeds/seed.js')
+const endpoints = require('../endpoints.json')
 
 beforeAll(()=>{
     return seed(testData);
@@ -39,7 +40,8 @@ describe('GET /api', ()=>{
         .expect(200)
         .then(({body})=>{
             expect(typeof body.endpoints).toBe('object')
-
+            expect(endpoints).toMatchObject(body.endpoints)
+            
             for (const key in body.endpoints){
                 expect(typeof body.endpoints[key].description).toBe('string')
                 expect(Array.isArray(body.endpoints[key].queries)).toBe(true)

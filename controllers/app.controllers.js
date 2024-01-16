@@ -1,5 +1,7 @@
-const { request } = require('../app.js');
-const {fetchTopics, fetchEndpoints, fetchArticleById} = require('../models/app.models.js')
+const {fetchTopics, fetchArticleById} = require('../models/app.models.js')
+const fs = require('fs/promises')
+
+
 
 exports.getTopics = 
 (request, response, next)=>{
@@ -9,7 +11,9 @@ exports.getTopics =
 }
 
 exports.getEndpoints = (request, response, next) => {
-    fetchEndpoints().then((endpoints)=>{
+    fs.readFile('./endpoints.json', 'utf-8')
+    .then((result)=>{
+        const endpoints = JSON.parse(result);
         response.status(200).send({endpoints});
     })
 };
