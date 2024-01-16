@@ -53,19 +53,25 @@ describe('GET /api', ()=>{
 
 describe('GET /api/articles/:article_id', ()=>{
     test('200: responds with an article object with relevant properties', ()=>{
+
+        const expectedOutput = {
+            article_id: 5,
+            title: 'UNCOVERED: catspiracy to bring down democracy',
+            topic: 'cats',
+            author: 'rogersop',
+            body: 'Bastet walks amongst us, and the cats are taking arms!',
+            created_at: '2020-08-03T13:14:00.000Z',
+            votes: 0,
+            article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+          }
+
         return request(app)
         .get('/api/articles/5')
         .expect(200)
         .then(({body})=>{
-            expect(typeof body.article).toBe('object')
-            expect(typeof body.article.title).toBe('string');
-            expect(typeof body.article.topic).toBe('string');
-            expect(typeof body.article.created_at).toBe('string');
-            expect(typeof body.article.author).toBe('string');
-            expect(typeof body.article.body).toBe('string');
-            expect(typeof body.article.votes).toBe('number');
-            expect(typeof body.article.article_img_url).toBe('string');
-        })
+            expect(body.article).toMatchObject(expectedOutput);
+            expect(body.article.article_id).toBe(5);
+        });
     });
     test('400: responds with invalid id if invalid  id entered', ()=>{
         return request(app)
@@ -83,4 +89,4 @@ describe('GET /api/articles/:article_id', ()=>{
             expect(body).toEqual({msg: 'article not found'})
         })
     });
-})
+});
