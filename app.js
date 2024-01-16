@@ -1,4 +1,4 @@
-const {getTopics, getEndpoints, getArticlesById, getArticles} = require('./controllers/app.controllers')
+const {getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId} = require('./controllers/app.controllers')
 
 const express = require('express');
 const app = express();
@@ -10,6 +10,8 @@ app.get('/api/topics', getTopics);
 app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id', getArticlesById)
+
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 
 // catches all errors that are not caught elsewhere
 app.all('*', (req, res)=>{
@@ -27,7 +29,7 @@ app.use((err, req, res, next)=>{
 //handles psql errors
 app.use((err, req, res, next) => {
     if (err.code === "22P02"){
-        res.status(400).send({ msg: 'invalid id entered' });
+        res.status(400).send({ msg: 'invalid id' });
     }
 });
 
