@@ -59,4 +59,31 @@ exports.checkIfArticleExists = (article_id)=>{
         }
     })
 }
-        
+
+exports.submitCommentOnArticle = (article_id, username, body)=>{
+
+    const values = [body, username, article_id]
+
+    if (values.includes(undefined) ){
+        return Promise.reject({status: 400, msg: 'incomplete input'})
+    }
+
+    if (typeof body !== 'string' || typeof Number(article_id) !== 'number' || typeof username !== 'string'){
+        return Promise.reject({status: 400, msg: 'invalid input'})
+    }
+
+    return this.checkIfArticleExists(article_id)
+    .then(()=>{
+        return db.query('INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING*', values)
+        .then((result)=>{
+            return result.rows[0].body
+        })
+    })
+}
+
+// not required at the moment ?
+// exports.fetchAuthor = (username)=>{
+//     return db.query('SELECT name FROM users WHERE username = $1', [username]).then((result)=>{
+//         return result.rows[0]
+//     })
+// }

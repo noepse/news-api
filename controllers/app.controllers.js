@@ -1,5 +1,5 @@
 const { request } = require('http');
-const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId} = require('../models/app.models.js')
+const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle} = require('../models/app.models.js')
 const fs = require('fs/promises')
 
 
@@ -38,5 +38,15 @@ exports.getCommentsByArticleId = (request, response, next) =>{
     fetchCommentsByArticleId(article_id)
     .then((comments)=>{
         response.status(200).send({comments})
+    }).catch(next);
+}
+
+exports.postCommentOnArticle = (request, response, next)=>{
+    const {article_id} = request.params;
+    const {username, body} = request.body
+    
+    submitCommentOnArticle(article_id, username, body)
+    .then((comment)=>{
+        response.status(201).send({comment})
     }).catch(next);
 }

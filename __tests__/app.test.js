@@ -172,3 +172,71 @@ describe('GET /api/articles/:article_id/comments', ()=>{
     });
 })
 
+
+describe('POST /api/articles/:article_id/comments', ()=>{
+    test('201: inserts a new comment into the db and responds with the posted comment', ()=>{
+        const input = {
+            username: 'butter_bridge',
+            body: 'this is a comment'
+        }
+        return request(app)
+        .post('/api/articles/5/comments')
+        .send(input)
+        .expect(201)
+        .then(({body})=>{
+            expect(body.comment).toEqual(input.body)
+        })
+    });
+    test('400: responds with incomplete input if input lacks necessary values', ()=>{
+        const input = {
+            body: 'this is a comment'
+        }
+        return request(app)
+        .post('/api/articles/5/comments')
+        .send(input)
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'incomplete input'})
+        })
+    })
+    // not sure if necessary
+    test('400: responds with invalid input if input contains invalid data types', ()=>{
+        const input = {
+            username: 234,
+            body: 134
+        }
+        return request(app)
+        .post('/api/articles/5/comments')
+        .send(input)
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'invalid input'})
+        })
+    });
+    test('400: responds with invalid id if invalid article id entered', ()=>{
+        const input = {
+            username: 'butter_bridge',
+            body: 'this is a comment'
+        }
+        return request(app)
+        .post('/api/articles/notanid/comments')
+        .send(input)
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'invalid id'})
+        })
+    })
+    test('404: responds with article not found if valid but non-existent article id entered', ()=>{
+        const input = {
+            username: 'butter_bridge',
+            body: 'this is a comment'
+        }
+        return request(app)
+        .post('/api/articles/9999/comments')
+        .send(input)
+        .expect(404)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'article not found'})
+        })
+    });
+})
