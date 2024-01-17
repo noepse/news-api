@@ -1,7 +1,9 @@
-const {getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId} = require('./controllers/app.controllers')
+const {getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId, postCommentOnArticle} = require('./controllers/app.controllers')
 
 const express = require('express');
 const app = express();
+
+app.use(express.json());
 
 app.get('/api', getEndpoints);
 
@@ -12,6 +14,8 @@ app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id', getArticlesById)
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
+
+app.post('/api/articles/:article_id/comments', postCommentOnArticle)
 
 // catches all errors that are not caught elsewhere
 app.all('*', (req, res)=>{

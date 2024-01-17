@@ -3,7 +3,7 @@ const db = require('../connection');
 const {
   convertTimestampToDate,
   createRef,
-  formatComments,
+  formatComments
 } = require('./utils');
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
