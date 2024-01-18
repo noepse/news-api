@@ -132,6 +132,7 @@ describe("GET /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article).toMatchObject(expectedOutput);
         expect(body.article.article_id).toBe(5);
+        expect(body.article.comment_count).toBe(2)
       });
   });
   test("400: responds with invalid id if invalid id entered", () => {

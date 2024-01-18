@@ -12,8 +12,18 @@ exports.fetchArticleById = (article_id) => {
         if (result.rows.length === 0){
             return Promise.reject({ status: 404, msg: 'article not found' })
         }
-        else return result.rows[0]
+        else {
+            return this.fetchCommentsByArticleId(article_id).then((comments)=>{
+                result.rows[0].comment_count = comments.length
+                return result.rows[0]
+            })}
     });
+}
+
+exports.fetchCommentsByArticleId = (article_id) =>{
+    return db.query('SELECT * FROM comments WHERE article_id = $1', [article_id]).then((result)=>{
+        return result.rows
+    })
 }
 
 exports.fetchArticles = async (topic) => {
