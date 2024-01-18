@@ -78,6 +78,40 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe('"GET /api/articles/?topic', ()=>{
+    test('200: responds with an array of articles under specified topic value', ()=>{
+        return request(app)
+        .get('/api/articles/?topic=cats')
+        .expect(200)
+        .then(({body})=>{
+            const articlesData = body.articles
+            expect(Array.isArray(articlesData)).toBe(true)
+            expect(articlesData.length).not.toBe(0)
+            articlesData.forEach((article)=>{
+                expect(article.topic).toEqual('cats');
+            });
+        })
+    });
+    test('200: responds with an empty array if a valid topic that has no corresponding articles is entered', ()=>{
+        return request(app)
+        .get('/api/articles/?topic=paper')
+        .expect(200)
+        .then(({body})=>{
+            const articlesData = body.articles
+            expect(Array.isArray(articlesData)).toBe(true)
+            expect(articlesData.length).toBe(0)
+        })
+    })
+    test('404: responds with topic not found if an invalid topic is entered', ()=>{
+        return request(app)
+        .get('/api/articles/?topic=notatopic')
+        .expect(404)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'topic not found'})
+        })
+    })
+})
+
 describe("GET /api/articles/:article_id", () => {
   test("200: responds with an article object with relevant properties", () => {
     const expectedOutput = {

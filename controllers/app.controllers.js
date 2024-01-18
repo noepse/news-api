@@ -28,9 +28,11 @@ exports.getArticlesById = (request, response, next) => {
 }
 
 exports.getArticles = ((request, response, next)=>{
-    fetchArticles().then((articles)=>{
+    const {topic} = request.query
+
+    fetchArticles(topic).then((articles)=>{
         response.status(200).send({articles});
-    })
+    }).catch(next)
 })
 
 exports.getCommentsByArticleId = (request, response, next) =>{
