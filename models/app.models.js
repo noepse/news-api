@@ -16,8 +16,23 @@ exports.fetchArticleById = (article_id) => {
     });
 }
 
-exports.fetchArticles = () => {
-    return db.query('SELECT*FROM articles ORDER BY created_at DESC')
+exports.fetchArticles = async (topic) => {
+
+    const queryValues = []
+
+    let queryStr = 'SELECT*FROM articles'
+
+    if(topic){
+        await this.checkTopicExists(topic)
+        queryValues.push(topic)
+        queryStr+= ` WHERE topic=$1`
+    }
+
+    console.log(queryStr)
+
+    queryStr += ' ORDER BY created_at DESC'
+
+    return db.query(queryStr, queryValues)
     .then((result)=>{
         const promises = []
         const articles = result.rows
@@ -32,6 +47,15 @@ exports.fetchArticles = () => {
             return articles
         })
     });
+}
+
+exports.checkTopicExists = (topic)=>{
+    return db.query('SELECT * FROM topics WHERE slug = $1', [topic])
+    .then((result)=>{
+        if (result.rows.length === 0){
+            return Promise.reject({ status: 404, msg: 'topic not found' })
+        }
+    })
 }
 
 exports.countCommentsByArticleId = (article_id) =>{
