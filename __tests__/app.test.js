@@ -19,6 +19,7 @@ describe("GET /api", () => {
       .then(({ body }) => {
         expect(typeof body.endpoints).toBe("object");
         expect(endpoints).toMatchObject(body.endpoints);
+        expect(body.endpoints.length).not.toBe(0)
 
         for (const key in body.endpoints) {
           expect(typeof body.endpoints[key].description).toBe("string");
@@ -27,9 +28,6 @@ describe("GET /api", () => {
         }
       });
   });
-});
-
-describe("GET /api/topics", () => {
   test("404: reponds with endpoint not found when unknown path entered", () => {
     return request(app)
       .get("/api/unknownpath")
@@ -38,20 +36,23 @@ describe("GET /api/topics", () => {
         expect(body.msg).toBe("endpoint not found");
       });
   });
-  test("200: responds with an array of topic objects with relevant keys", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then((data) => {
-        const topicsData = data.body.topics;
-        expect(Array.isArray(topicsData)).toBe(true);
-        expect(topicsData.length > 0).toBe(true);
-        topicsData.forEach((topic) => {
-          expect(typeof topic.slug).toBe("string");
-          expect(typeof topic.description).toBe("string");
-        });
+});
+
+describe("GET /api/topics", () => {
+    test("200: responds with an array of topic objects with relevant keys", () => {
+        return request(app)
+          .get("/api/topics")
+          .expect(200)
+          .then((data) => {
+            const topicsData = data.body.topics;
+            expect(Array.isArray(topicsData)).toBe(true);
+            expect(topicsData.length > 0).toBe(true);
+            topicsData.forEach((topic) => {
+              expect(typeof topic.slug).toBe("string");
+              expect(typeof topic.description).toBe("string");
+            });
+          });
       });
-  });
 });
 
 describe("GET /api/articles", () => {
@@ -350,4 +351,23 @@ describe("DELETE /api/comments/:comment_id", ()=>{
             expect(body).toEqual({msg: 'comment not found'})
         })
     })
+})
+
+describe('GET /api/users', ()=>{
+    test('200: responds with an array of user objects with relevant properties', ()=>{
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body})=>{
+            const usersData = body.users
+            expect(Array.isArray(usersData)).toBe(true);
+            expect(usersData.length).not.toBe(0)
+
+            usersData.forEach((user) => {
+              expect(typeof user.username).toBe("string");
+              expect(typeof user.name).toBe("string");
+              expect(typeof user.avatar_url).toBe("string");
+            })
+        })
+    });
 })

@@ -1,5 +1,5 @@
 const { request } = require('http');
-const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle, updateArticleVotes, removeCommentById} = require('../models/app.models.js')
+const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle, updateArticleVotes, removeCommentById, fetchUsers} = require('../models/app.models.js')
 const fs = require('fs/promises')
 
 
@@ -68,4 +68,10 @@ exports.deleteCommentById = (request, response, next)=> {
     .then(()=>{
         response.status(204).send({})
     }).catch(next)
+}
+
+exports.getUsers = (request, response, next)=>{
+    fetchUsers().then((users)=>{
+        response.status(200).send({users});
+    })
 }
