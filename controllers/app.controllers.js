@@ -1,5 +1,5 @@
 const { request } = require('http');
-const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle, updateArticleVotes} = require('../models/app.models.js')
+const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle, updateArticleVotes, removeCommentById} = require('../models/app.models.js')
 const fs = require('fs/promises')
 
 
@@ -58,5 +58,14 @@ exports.patchArticleVotes = (request, response, next)=>{
     updateArticleVotes(article_id, inc_votes)
     .then((article)=>{
         response.status(200).send({article});
+    }).catch(next)
+}
+
+exports.deleteCommentById = (request, response, next)=> {
+    const {comment_id} = request.params;
+    
+    removeCommentById(comment_id)
+    .then(()=>{
+        response.status(204).send({})
     }).catch(next)
 }

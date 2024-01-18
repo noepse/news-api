@@ -1,4 +1,4 @@
-const {getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId, postCommentOnArticle, patchArticleVotes} = require('./controllers/app.controllers')
+const {getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId, postCommentOnArticle, patchArticleVotes, deleteCommentById} = require('./controllers/app.controllers')
 
 const express = require('express');
 const app = express();
@@ -16,6 +16,8 @@ app.patch('/api/articles/:article_id', patchArticleVotes)
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 app.post('/api/articles/:article_id/comments', postCommentOnArticle)
+
+app.delete('/api/comments/:comment_id', deleteCommentById)
 
 // catches all errors that are not caught elsewhere
 app.all('*', (req, res)=>{
