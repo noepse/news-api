@@ -107,7 +107,6 @@ exports.updateArticleVotes = (article_id, inc_votes) =>{
         const updatedVotes = votes + inc_votes
         return this.updateArticleById(article_id, updatedVotes)
         .then(()=>{
-            console.log('hi')
             return this.fetchArticleById(article_id)
         })
     
