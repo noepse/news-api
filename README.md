@@ -2,7 +2,7 @@
 
 a News API which returns requests for data on articles, comments and users.
 
-Access API [here](https://news-app-2.onrender.com/api/)
+access API [here](https://news-app-2.onrender.com/api/)
 
 ## accessing database locally
 
@@ -34,7 +34,7 @@ first **clone this repo** to your local machine and then proceed through the fol
 // npm run seed
 ```
 
-### running tests:
+### running tests
 
 1. run the following command in terminal
 
