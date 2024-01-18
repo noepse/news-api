@@ -21,6 +21,7 @@
     "exampleResponse": {
       "articles": [
         {
+          "article_id": 1,
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
@@ -30,6 +31,43 @@
           "comment_count": 6
         }
       ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves the requested article object",
+    "queries": [],
+    "exampleResponse": {
+      "article":
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "comment_count": 6
+        }
+      
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "serves the requested article object with an updated votes value",
+    "queries": [],
+    "exampleBody": {"inc_votes": 10},
+    "exampleResponse": {
+      "article":
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 10,
+          "comment_count": 6
+        }
+      
     }
   },
   "GET /api/articles/:article_id/comments": {
@@ -47,5 +85,21 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "serves a posted comment on the requested article",
+    "queries": [],
+    "exampleBody": {
+      "username": "example_user",
+      "body": "example comment"
+    },
+    "exampleResponse": {
+      "comment": "example comment"
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes the specified comment and returns no content",
+    "queries": [],
+    "exampleResponse": {}
   }
 }

@@ -141,9 +141,6 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.article).toMatchObject(expectedOutput);
       });
   });
-  // 400 missing inc_votes
-  // 400 invalid votes entry
-  // 400 invalid article / 404 not found article
   test('400: responds with missing votes value if incomplete body sent', ()=>{
     const input = {};
 
@@ -189,8 +186,6 @@ describe("PATCH /api/articles/:article_id", () => {
     })
   })
 });
-
-
 
 describe("GET /api/articles/:article_id/comments", () => {
   test("200: responds with an array of comments for a given article id", () => {
@@ -331,3 +326,28 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", ()=>{
+    test('204: deletes the specified comment and returns no content', ()=>{
+        return request(app)
+        .delete('/api/comments/5')
+        .expect(204)
+        // 204 status code responds with no body no matter what, so no .then is necessary
+    });
+    test('400: responds with invalid id if invalid comment id entered', ()=>{
+        return request(app)
+        .delete('/api/comments/banana')
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'invalid id'})
+        })
+    })
+    test('404: responds with comment not found if valid but non existent comment id entered', ()=>{
+        return request(app)
+        .delete('/api/comments/9999')
+        .expect(404)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'comment not found'})
+        })
+    })
+})
