@@ -184,7 +184,7 @@ describe('POST /api/articles/:article_id/comments', ()=>{
         .send(input)
         .expect(201)
         .then(({body})=>{
-            expect(body.comment).toEqual(input.body)
+            expect(body.comment).toEqual('this is a comment')
         })
     });
     test('400: responds with incomplete input if input lacks necessary values', ()=>{
@@ -225,7 +225,20 @@ describe('POST /api/articles/:article_id/comments', ()=>{
         .then(({body})=>{
             expect(body).toEqual({msg: 'invalid id'})
         })
-    })
+    });
+    test('400: responds with invalid username if username not present on database is entered', ()=>{
+        const input = {
+            username: 'butter',
+            body: 'this is a comment'
+        }
+        return request(app)
+        .post('/api/articles/5/comments')
+        .send(input)
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'username not found'})
+        })
+    });
     test('404: responds with article not found if valid but non-existent article id entered', ()=>{
         const input = {
             username: 'butter_bridge',
