@@ -101,5 +101,12 @@
     "description": "deletes the specified comment and returns no content",
     "queries": [],
     "exampleResponse": {}
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "username": "example_user", "name": "Example Name", "avatar_url": "/avatar.jpg"}]
+    }
   }
 }
