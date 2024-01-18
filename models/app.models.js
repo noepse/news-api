@@ -84,11 +84,26 @@ exports.submitCommentOnArticle = (article_id, username, body)=>{
     })
 }
 
-// not required at the moment ?
 exports.checkAuthorExists = (username)=>{
     return db.query('SELECT name FROM users WHERE username = $1', [username]).then((result)=>{
         if (result.rows.length === 0){
             return Promise.reject({ status: 400, msg: 'username not found' })
         }
+    })
+}
+
+exports.updateArticleVotes = (article_id, inc_votes) =>{
+
+    if (inc_votes === undefined ){
+        return Promise.reject({status: 400, msg: 'missing votes value'})
+    }
+
+    if (typeof inc_votes !== 'number' || inc_votes === NaN){
+        return Promise.reject({status: 400, msg: 'invalid votes value'})
+    }
+
+    return this.fetchArticleById(article_id).then((article)=>{
+        article.votes += inc_votes
+        return article;
     })
 }
