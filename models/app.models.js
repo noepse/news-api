@@ -42,7 +42,7 @@ exports.countCommentsByArticleId = (article_id) =>{
 }
 
 exports.fetchCommentsByArticleId = (article_id) =>{
-    return this.checkIfArticleExists(article_id)
+    return this.checkArticleExists(article_id)
     .then(()=>{
         return db.query('SELECT * FROM comments WHERE article_id = $1 ORDER by created_at DESC', [article_id])
         .then((result)=>{
@@ -51,7 +51,7 @@ exports.fetchCommentsByArticleId = (article_id) =>{
     })
 }
 
-exports.checkIfArticleExists = (article_id)=>{
+exports.checkArticleExists = (article_id)=>{
     return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id])
     .then((result)=>{
         if (result.rows.length === 0){
@@ -72,18 +72,23 @@ exports.submitCommentOnArticle = (article_id, username, body)=>{
         return Promise.reject({status: 400, msg: 'invalid input'})
     }
 
-    return this.checkIfArticleExists(article_id)
+    return this.checkArticleExists(article_id)
     .then(()=>{
-        return db.query('INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING*', values)
-        .then((result)=>{
-            return result.rows[0].body
+        return this.checkAuthorExists(username)
+        .then(()=>{
+            return db.query('INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING*', values)
+            .then((result)=>{
+                return result.rows[0].body
+            })
         })
     })
 }
 
 // not required at the moment ?
-// exports.fetchAuthor = (username)=>{
-//     return db.query('SELECT name FROM users WHERE username = $1', [username]).then((result)=>{
-//         return result.rows[0]
-//     })
-// }
+exports.checkAuthorExists = (username)=>{
+    return db.query('SELECT name FROM users WHERE username = $1', [username]).then((result)=>{
+        if (result.rows.length === 0){
+            return Promise.reject({ status: 400, msg: 'username not found' })
+        }
+    })
+}
