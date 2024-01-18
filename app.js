@@ -1,4 +1,4 @@
-const {getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId, postCommentOnArticle} = require('./controllers/app.controllers')
+const {getTopics, getEndpoints, getArticlesById, getArticles, getCommentsByArticleId, postCommentOnArticle, patchArticleVotes} = require('./controllers/app.controllers')
 
 const express = require('express');
 const app = express();
@@ -12,9 +12,9 @@ app.get('/api/topics', getTopics);
 app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id', getArticlesById)
+app.patch('/api/articles/:article_id', patchArticleVotes)
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
-
 app.post('/api/articles/:article_id/comments', postCommentOnArticle)
 
 // catches all errors that are not caught elsewhere
