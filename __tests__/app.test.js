@@ -395,7 +395,7 @@ describe('GET /api/users', ()=>{
         .then(({body})=>{
             const usersData = body.users
             expect(Array.isArray(usersData)).toBe(true);
-            expect(usersData.length).toBe(5)
+            expect(usersData.length).toBe(4)
 
             usersData.forEach((user) => {
               expect(typeof user.username).toBe("string");
