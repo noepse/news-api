@@ -102,11 +102,28 @@ exports.updateArticleVotes = (article_id, inc_votes) =>{
         return Promise.reject({status: 400, msg: 'invalid votes value'})
     }
 
-    return this.fetchArticleById(article_id).then((article)=>{
-        article.votes += inc_votes
-        return article;
+    return this.fetchVotesOnArticle(article_id)
+    .then((votes)=>{
+        const updatedVotes = votes + inc_votes
+        return this.updateArticleById(article_id, updatedVotes)
+        .then(()=>{
+            console.log('hi')
+            return this.fetchArticleById(article_id)
+        })
+    
     })
 }
+
+exports.fetchVotesOnArticle = (article_id) => {
+    return this.fetchArticleById(article_id).then((result)=>{
+        return result.votes;
+    })
+}
+
+exports.updateArticleById = (article_id, value)=>{
+    return db.query('UPDATE articles SET votes =  $1 WHERE article_id = $2', [value, article_id])
+}
+
 
 exports.removeCommentById = (comment_id)=>{
     return this.checkCommentExists(comment_id)
