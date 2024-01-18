@@ -28,8 +28,6 @@ exports.fetchArticles = async (topic) => {
         queryStr+= ` WHERE topic=$1`
     }
 
-    console.log(queryStr)
-
     queryStr += ' ORDER BY created_at DESC'
 
     return db.query(queryStr, queryValues)
