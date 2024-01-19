@@ -425,6 +425,74 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("PATCH /api/comments/:comment_id", () => {
+    test("200: responds with the requested comment object with an updated votes property", () => {
+      const input = { inc_votes: 1 };
+      const expectedOutput = {
+        comment_id: 18,
+        body: "This morning, I showered for nine minutes.",
+        votes: 17,
+        author: "butter_bridge",
+        article_id: 1,
+        created_at: "2020-07-21T00:20:00.000Z",
+      }
+
+      return request(app)
+        .patch("/api/comments/18")
+        .send(input)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment.comment_id).toEqual(18)
+          expect(body.comment.votes).toEqual(17)
+          expect(body.comment).toMatchObject(expectedOutput);
+        });
+    });
+    test('400: responds with missing votes value if incomplete body sent', ()=>{
+      const input = {};
+  
+      return request(app)
+      .patch('/api/comments/18')
+      .send(input)
+      .expect(400)
+      .then(({body})=>{
+          expect(body).toEqual({msg: 'missing votes value'})
+      })
+    })
+    test('400: responds with invalid votes value if invalid data type entered', ()=>{
+      const input = {inc_votes: 'three'};
+  
+      return request(app)
+      .patch('/api/comments/18')
+      .send(input)
+      .expect(400)
+      .then(({body})=>{
+          expect(body).toEqual({msg: 'invalid votes value'})
+      })
+    })
+    test('400: responds with invalid id if invalid comment id entered', ()=>{
+      const input = {inc_votes: 1};
+  
+      return request(app)
+      .patch('/api/comments/eighteen')
+      .send(input)
+      .expect(400)
+      .then(({body})=>{
+          expect(body).toEqual({msg: 'invalid id'})
+      })
+    })
+    test('404: responds with comment not found if valid but non existent comment id entered', ()=>{
+      const input = {inc_votes: 1};
+  
+      return request(app)
+      .patch('/api/comments/9999')
+      .send(input)
+      .expect(404)
+      .then(({body})=>{
+          expect(body).toEqual({msg: 'comment not found'})
+      })
+    })
+  });
+
 describe("DELETE /api/comments/:comment_id", ()=>{
     test('204: deletes the specified comment and returns no content', ()=>{
         return request(app)

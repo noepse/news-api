@@ -52,7 +52,7 @@
     }
   },
   "PATCH /api/articles/:article_id": {
-    "description": "serves the requested article object with an updated votes value",
+    "description": "serves the requested article object with an updated votes value - incremented by the specified amount",
     "queries": [],
     "exampleBody": {"inc_votes": 10},
     "exampleResponse": {
@@ -95,6 +95,23 @@
     },
     "exampleResponse": {
       "comment": "example comment"
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "serves the requested comment object with an updated votes value - incremented by the specified amount",
+    "queries": [],
+    "exampleBody": {"inc_votes": 7},
+    "exampleResponse": {
+      "comment":
+      {
+        "comment_id": 3,
+        "votes": 10,
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "article_id": 12
+      }
+      
     }
   },
   "DELETE /api/comments/:comment_id": {

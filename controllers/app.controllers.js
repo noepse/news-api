@@ -1,5 +1,5 @@
 const { request } = require('http');
-const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle, updateArticleVotes, removeCommentById, fetchUsers, fetchUserByUsername} = require('../models/app.models.js')
+const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle, updateArticleVotes, removeCommentById, fetchUsers, fetchUserByUsername, updateCommentVotes} = require('../models/app.models.js')
 const fs = require('fs/promises')
 
 
@@ -82,5 +82,15 @@ exports.getUserByUsername = (request, response, next) =>{
     const {username} = request.params
     fetchUserByUsername(username).then((user)=>{
         response.status(200).send({user})
+    }).catch(next)
+}
+
+exports.patchCommentVotes = (request, response, next)=>{
+    const {comment_id} = request.params
+    const {inc_votes} = request.body
+
+    updateCommentVotes(comment_id, inc_votes)
+    .then((comment)=>{
+        response.status(200).send({comment});
     }).catch(next)
 }

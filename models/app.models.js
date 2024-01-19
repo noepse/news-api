@@ -197,3 +197,42 @@ exports.fetchUserByUsername = (username)=>{
         return result.rows[0]
     })
 }
+
+exports.updateCommentVotes = (comment_id, inc_votes) => {
+    if (inc_votes === undefined ){
+        return Promise.reject({status: 400, msg: 'missing votes value'})
+    }
+
+    if (typeof inc_votes !== 'number' || inc_votes === NaN){
+        return Promise.reject({status: 400, msg: 'invalid votes value'})
+    }
+
+    return this.fetchVotesOnComment(comment_id)
+    .then((votes)=>{
+        const updatedVotes = votes + inc_votes
+        return this.updateCommentById(comment_id, updatedVotes)
+        .then(()=>{
+            return this.fetchCommentById(comment_id)
+        })
+    
+    })
+}
+
+exports.fetchVotesOnComment = (comment_id) => {
+    return this.fetchCommentById(comment_id).then((result)=>{
+        return result.votes;
+    })
+}
+
+exports.fetchCommentById = (comment_id)=>{
+    return db.query('SELECT * FROM comments WHERE comment_id = $1', [comment_id]).then((result)=>{
+        if (result.rows.length === 0){
+            return Promise.reject({ status: 404, msg: 'comment not found' })
+        }
+        return result.rows[0];
+    })
+}
+
+exports.updateCommentById = (comment_id, value)=>{
+    return db.query('UPDATE comments SET votes =  $1 WHERE comment_id = $2', [value, comment_id])
+}
