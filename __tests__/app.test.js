@@ -5,11 +5,13 @@ const testData = require("../db/data/test-data/index.js");
 const seed = require("../db/seeds/seed.js");
 const endpoints = require("../endpoints.json");
 
-beforeAll(() => {
+beforeEach(() => {
   return seed(testData);
 });
 
-afterAll(() => db.end());
+afterAll(() => {
+    db.end()
+});
 
 describe("GET /api", () => {
   test("200: responds with object containing relevant keys for each endpoint", () => {
@@ -215,6 +217,131 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+describe("POST /api/articles", () => {
+    test("201: inserts a new article into the db and responds with the posted article", () => {
+      const input = {
+        author: "rogersop",
+        title: "test title",
+        body: "a very non descriptive test body",
+        topic: "cats",
+        article_img_url: "testurl.jpg",
+      };
+
+      const expectedOutput = {
+        article_id: 14,
+        author: "rogersop",
+        title: "test title",
+        body: "a very non descriptive test body",
+        topic: "cats",
+        article_img_url: "testurl.jpg",
+        votes: 0,
+        comment_count: 0,
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(input)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article).toMatchObject(expectedOutput);
+          expect(typeof body.article.created_at).toBe('string')
+          expect(body.article.article_id).toEqual(14)
+        });
+    });
+    test("201: inserts a new article into the db with a default article image url if not entered", () => {
+        const input = {
+          author: "rogersop",
+          title: "test title",
+          body: "a very non descriptive test body",
+          topic: "cats",
+        };
+  
+        const expectedOutput = {
+          article_id: 14,
+          author: "rogersop",
+          title: "test title",
+          body: "a very non descriptive test body",
+          topic: "cats",
+          article_img_url: "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          votes: 0,
+          comment_count: 0,
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(input)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.article).toMatchObject(expectedOutput);
+            expect(typeof body.article.created_at).toBe('string')
+            expect(body.article.article_id).toEqual(14)
+            expect(body.article.article_img_url).toBe('https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700')
+          });
+      });
+    test("400: responds with incomplete input if input lacks necessary values", () => {
+      const input = {
+        author: "rogersop",
+        body: "a very non descriptive test body",
+        topic: "cats",
+        article_img_url: "testurl.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(input)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "incomplete input" });
+        });
+    });
+    // not sure if necessary
+    test("400: responds with invalid input if input contains invalid data types", () => {
+      const input = {
+        author: "rogersop",
+        title: 314541,
+        body: "a very non descriptive test body",
+        topic: "cats",
+        article_img_url: "testurl.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(input)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "invalid input" });
+        });
+    });
+    test("400: responds with invalid username if invalid author given", () => {
+      const input = {
+        author: "roger",
+        title: "test title",
+        body: "a very non descriptive test body",
+        topic: "cats",
+        article_img_url: "testurl.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(input)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "invalid username" });
+        });
+    });
+    test("404: responds with topic not found if valid but non existent topic given", () => {
+      const input = {
+        author: "rogersop",
+        title: "test title",
+        body: "a very non descriptive test body",
+        topic: "invalidtopic",
+        article_img_url: "testurl.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(input)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "topic not found" });
+        });
+    });
+  });
+
 describe("PATCH /api/articles/:article_id", () => {
   test("200: responds with the requested article object with an updated votes property", () => {
     const input = { inc_votes: 1 };
@@ -407,7 +534,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(input)
       .expect(400)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "username not found" });
+        expect(body).toEqual({ msg: "invalid username" });
       });
   });
   test("404: responds with article not found if valid but non-existent article id entered", () => {
