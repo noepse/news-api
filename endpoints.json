@@ -33,6 +33,27 @@
       ]
     }
   },
+  "POST /api/articles": {
+    "description": "serves a posted article to the db",
+    "queries": [],
+    "exampleBody": {
+      "author": "weegembump",
+      "title": "example title",
+      "body": "a very descriptive example body",
+      "topic": "cooking",
+      "article_img_url": "testurl.jpg [optional]"
+    },
+    "exampleResponse": {
+      "article_id": 14,
+      "author": "weegembump",
+      "title": "example title",
+      "body": "a very descriptive example body",
+      "topic": "cooking",
+      "article_img_url": "testurl.jpg",
+      "votes": 0,
+      "comment_count": 0
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "serves the requested article object",
     "queries": [],
