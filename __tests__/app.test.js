@@ -62,7 +62,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
-        expect(body.articles.length > 0).toBe(true);
+        expect(body.articles.length).toBe(13);
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
         body.articles.forEach((article) => {
           expect(typeof article.title).toBe("string");
@@ -108,6 +108,68 @@ describe('"GET /api/articles/?topic', ()=>{
         .expect(404)
         .then(({body})=>{
             expect(body).toEqual({msg: 'topic not found'})
+        })
+    })
+})
+
+describe('GET /api/articles?sort_by', ()=>{
+    test('200: responds with an array of articles sorted by specified query - descending by default', ()=>{
+        return request(app)
+        .get('/api/articles/?sort_by=title')
+        .expect(200)
+        .then(({body})=>{
+            expect(Array.isArray(body.articles)).toBe(true);
+            expect(body.articles.length).toBe(13);
+            expect(body.articles).toBeSortedBy("title", { descending: true });
+            body.articles.forEach((article) => {
+                expect(typeof article.title).toBe("string");
+                expect(typeof article.article_id).toBe("number");
+                expect(typeof article.topic).toBe("string");
+                expect(typeof article.created_at).toBe("string");
+                expect(typeof article.votes).toBe("number");
+                expect(typeof article.article_img_url).toBe("string");
+                expect(typeof article.comment_count).toBe("number");
+                expect(article).not.toHaveProperty("body");
+              });
+        })
+    });
+    test('400: responds with invalid sort query if invalid sort query entered', ()=>{
+        return request(app)
+        .get('/api/articles/?sort_by=notaquery')
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'invalid sort query'});
+        })
+    })
+})
+
+describe('GET /api/articles?order_', ()=>{
+    test('200: responds with an array of articles sorted by specified order - created_at by default', ()=>{
+        return request(app)
+        .get('/api/articles/?order_by=asc')
+        .expect(200)
+        .then(({body})=>{
+            expect(Array.isArray(body.articles)).toBe(true);
+            expect(body.articles.length).toBe(13);
+            expect(body.articles).toBeSortedBy("created_at", { descending: false });
+            body.articles.forEach((article) => {
+                expect(typeof article.title).toBe("string");
+                expect(typeof article.article_id).toBe("number");
+                expect(typeof article.topic).toBe("string");
+                expect(typeof article.created_at).toBe("string");
+                expect(typeof article.votes).toBe("number");
+                expect(typeof article.article_img_url).toBe("string");
+                expect(typeof article.comment_count).toBe("number");
+                expect(article).not.toHaveProperty("body");
+              });
+        })
+    });
+    test('400: responds with invalid order query if invalid order query entered', ()=>{
+        return request(app)
+        .get('/api/articles/?order_by=notaquery')
+        .expect(400)
+        .then(({body})=>{
+            expect(body).toEqual({msg: 'invalid order query'});
         })
     })
 })
@@ -406,3 +468,4 @@ describe('GET /api/users', ()=>{
         })
     });
 })
+
