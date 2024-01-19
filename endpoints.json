@@ -108,5 +108,12 @@
     "exampleResponse": {
       "topics": [{ "username": "example_user", "name": "Example Name", "avatar_url": "/avatar.jpg"}]
     }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an object of the specified user",
+    "queries": [],
+    "exampleResponse": {
+      "topics": { "username": "example_user", "name": "Example Name", "avatar_url": "/avatar.jpg"}
+    }
   }
 }
