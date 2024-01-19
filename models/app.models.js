@@ -26,7 +26,7 @@ exports.fetchCommentsByArticleId = (article_id) =>{
     })
 }
 
-exports.fetchArticles = async (topic) => {
+exports.fetchArticles = async (topic, sort_by = 'created_at', order_by = 'desc') => {
 
     const queryValues = []
 
@@ -38,7 +38,21 @@ exports.fetchArticles = async (topic) => {
         queryStr+= ` WHERE topic=$1`
     }
 
-    queryStr += ' ORDER BY created_at DESC'
+        const validSortBy = ['title', 'topic', 'author', 'body', 'created_at', 'article_img_url']
+
+        if (!validSortBy.includes(sort_by)){
+            return Promise.reject({status: 400, msg: 'invalid sort query'})
+        }
+
+        const validOrderBy = ['asc', 'desc']
+
+        if (!validOrderBy.includes(order_by)){
+            return Promise.reject({status: 400, msg: 'invalid order query'})
+        }
+
+        queryStr+= ` ORDER BY ${sort_by} ${order_by}`
+
+    console.log(queryStr)
 
     return db.query(queryStr, queryValues)
     .then((result)=>{
