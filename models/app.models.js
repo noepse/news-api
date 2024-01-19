@@ -52,8 +52,6 @@ exports.fetchArticles = async (topic, sort_by = 'created_at', order_by = 'desc')
 
         queryStr+= ` ORDER BY ${sort_by} ${order_by}`
 
-    console.log(queryStr)
-
     return db.query(queryStr, queryValues)
     .then((result)=>{
         const promises = []

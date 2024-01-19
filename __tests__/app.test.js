@@ -112,7 +112,7 @@ describe('"GET /api/articles/?topic', ()=>{
     })
 })
 
-describe('GET /api/articles?sort_by', ()=>{
+describe('GET /api/articles/?sort_by', ()=>{
     test('200: responds with an array of articles sorted by specified query - descending by default', ()=>{
         return request(app)
         .get('/api/articles/?sort_by=title')
@@ -143,7 +143,7 @@ describe('GET /api/articles?sort_by', ()=>{
     })
 })
 
-describe('GET /api/articles?order_', ()=>{
+describe('GET /api/articles/?order_by', ()=>{
     test('200: responds with an array of articles sorted by specified order - created_at by default', ()=>{
         return request(app)
         .get('/api/articles/?order_by=asc')
