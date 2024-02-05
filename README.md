@@ -20,7 +20,7 @@ first **clone this repo** to your local machine and then proceed through the fol
 // PGDATABASE=nc_news_test 
 ```
 
-2. create a .env.test file in the root folder containing: 
+2. create a .env.development file in the root folder containing: 
 
 ```
 // PGDATABASE=nc_news 

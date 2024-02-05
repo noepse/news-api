@@ -436,6 +436,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/5/comments")
       .expect(200)
       .then(({ body }) => {
+        console.log(body)
         expect(Array.isArray(body.comments)).toBe(true);
         expect(body.comments).toBeSortedBy("created_at", { descending: true });
         expect(body.comments).toMatchObject(expectedOutput);
