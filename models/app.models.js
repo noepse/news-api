@@ -148,7 +148,7 @@ exports.submitCommentOnArticle = (article_id, username, body) => {
           values
         )
         .then((result) => {
-          return result.rows[0].body;
+          return result.rows[0];
         });
     });
   });
@@ -298,7 +298,6 @@ exports.submitArticle = (author, title, body, topic, article_img_url) => {
         requiredValues
       )
       .then((result) => {
-        console.log(result)
         const article_id = result.rows[0].article_id
         return this.fetchArticleById(article_id)
       })

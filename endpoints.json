@@ -115,7 +115,14 @@
       "body": "example comment"
     },
     "exampleResponse": {
-      "comment": "example comment"
+      "comment": {
+        "comment_id": 10,
+        "body": "example comment",
+        "article_id": 2,
+        "author": "example_user",
+        "votes": 0,
+        "created_at": "2024-03-04T14:07:29.340Z"
+      }
     }
   },
   "PATCH /api/comments/:comment_id": {
