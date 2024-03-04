@@ -436,7 +436,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/5/comments")
       .expect(200)
       .then(({ body }) => {
-        console.log(body)
         expect(Array.isArray(body.comments)).toBe(true);
         expect(body.comments).toBeSortedBy("created_at", { descending: true });
         expect(body.comments).toMatchObject(expectedOutput);
@@ -478,12 +477,18 @@ describe("POST /api/articles/:article_id/comments", () => {
       username: "butter_bridge",
       body: "this is a comment",
     };
+
     return request(app)
       .post("/api/articles/5/comments")
       .send(input)
       .expect(201)
       .then(({ body }) => {
-        expect(body.comment).toEqual("this is a comment");
+        expect(body.comment).toHaveProperty('comment_id', 19);
+        expect(body.comment).toHaveProperty('article_id', 5);
+        expect(body.comment).toHaveProperty('author', 'butter_bridge');
+        expect(body.comment).toHaveProperty('body', 'this is a comment');
+        expect(body.comment).toHaveProperty('votes', 0);
+        expect(body.comment).toHaveProperty('created_at');
       });
   });
   test("400: responds with incomplete input if input lacks necessary values", () => {
