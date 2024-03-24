@@ -28,10 +28,10 @@ exports.getArticlesById = (request, response, next) => {
 }
 
 exports.getArticles = ((request, response, next)=>{
-    const {topic, sort_by, order_by} = request.query
+    const {topic, sort_by, order_by, limit} = request.query
 
-    fetchArticles(topic, sort_by, order_by).then((articles)=>{
-        response.status(200).send({articles});
+    fetchArticles(topic, sort_by, order_by, limit).then((articles)=>{
+        response.status(200).send({total_count: articles.length, articles});
     }).catch(next)
 })
 

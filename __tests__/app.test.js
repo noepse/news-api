@@ -64,7 +64,6 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
-        expect(body.articles.length).toBe(13);
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
         body.articles.forEach((article) => {
           expect(typeof article.title).toBe("string");
@@ -121,7 +120,6 @@ describe('GET /api/articles/?sort_by', ()=>{
         .expect(200)
         .then(({body})=>{
             expect(Array.isArray(body.articles)).toBe(true);
-            expect(body.articles.length).toBe(13);
             expect(body.articles).toBeSortedBy("title", { descending: true });
             body.articles.forEach((article) => {
                 expect(typeof article.title).toBe("string");
@@ -152,7 +150,6 @@ describe('GET /api/articles/?order_by', ()=>{
         .expect(200)
         .then(({body})=>{
             expect(Array.isArray(body.articles)).toBe(true);
-            expect(body.articles.length).toBe(13);
             expect(body.articles).toBeSortedBy("created_at", { descending: false });
             body.articles.forEach((article) => {
                 expect(typeof article.title).toBe("string");
@@ -175,6 +172,57 @@ describe('GET /api/articles/?order_by', ()=>{
         })
     })
 })
+
+describe('GET /api/articles/?limit', ()=>{
+  test('200: responds with an array of 10 articles by default', ()=>{
+      return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({body})=>{
+          expect(Array.isArray(body.articles)).toBe(true);
+          expect(body.articles.length).toBe(10);
+          expect(body.total_count).toBe(10);
+          body.articles.forEach((article) => {
+              expect(typeof article.title).toBe("string");
+              expect(typeof article.article_id).toBe("number");
+              expect(typeof article.topic).toBe("string");
+              expect(typeof article.created_at).toBe("string");
+              expect(typeof article.votes).toBe("number");
+              expect(typeof article.article_img_url).toBe("string");
+              expect(typeof article.comment_count).toBe("number");
+              expect(article).not.toHaveProperty("body");
+            });
+      })
+  });
+  test('200: responds with an array of limited articles', ()=>{
+    return request(app)
+    .get('/api/articles/?limit=5')
+    .expect(200)
+    .then(({body})=>{
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.length).toBe(5);
+        expect(body.total_count).toBe(5);
+        body.articles.forEach((article) => {
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.votes).toBe("number");
+            expect(typeof article.article_img_url).toBe("string");
+            expect(typeof article.comment_count).toBe("number");
+            expect(article).not.toHaveProperty("body");
+          });
+    })
+});
+test('400: responds with invalid limit query if an invalid limit query is inputted', ()=>{
+  return request(app)
+  .get('/api/articles/?limit=notanumber')
+  .expect(400)
+  .then(({ body }) => {
+    expect(body).toEqual({ msg: "invalid limit query" });
+  });
+});
+});
 
 describe("GET /api/articles/:article_id", () => {
   test("200: responds with an article object with relevant properties", () => {

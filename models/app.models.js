@@ -32,11 +32,12 @@ exports.fetchCommentsByArticleId = (article_id) => {
 exports.fetchArticles = async (
   topic,
   sort_by = "created_at",
-  order_by = "desc"
+  order_by = "desc",
+  limit = 10
 ) => {
   const queryValues = [];
 
-  let queryStr = "SELECT*FROM articles";
+  let queryStr = `SELECT * FROM articles`;
 
   if (topic) {
     await this.checkTopicExists(topic);
@@ -64,6 +65,13 @@ exports.fetchArticles = async (
   }
 
   queryStr += ` ORDER BY ${sort_by} ${order_by}`;
+
+  if(isNaN(limit))
+  {
+    return Promise.reject({ status: 400, msg: "invalid limit query" });
+  }
+
+  queryStr += ` LIMIT ${limit} `
 
   return db.query(queryStr, queryValues).then((result) => {
     const promises = [];
