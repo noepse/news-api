@@ -19,7 +19,7 @@
     "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order, limit, p"],
     "exampleResponse": {
-      "total_count" : 1,
+      "total_count" : 3,
       "articles": [
         {
           "article_id": 1,
