@@ -93,6 +93,11 @@
       
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes the requested article object",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "PATCH /api/articles/:article_id": {
     "description": "serves the requested article object with an updated votes value - incremented by the specified amount",
     "queries": [],

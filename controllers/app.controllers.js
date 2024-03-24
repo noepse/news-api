@@ -1,5 +1,5 @@
 const { request } = require('http');
-const {fetchTopics, fetchArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle, updateArticleVotes, removeCommentById, fetchUsers, fetchUserByUsername, updateCommentVotes, submitArticle} = require('../models/app.models.js')
+const {fetchTopics, fetchArticleById, removeArticleById, fetchArticles, fetchCommentsByArticleId, submitCommentOnArticle, updateArticleVotes, removeCommentById, fetchUsers, fetchUserByUsername, updateCommentVotes, submitArticle} = require('../models/app.models.js')
 const fs = require('fs/promises')
 
 
@@ -19,11 +19,19 @@ exports.getEndpoints = (request, response, next) => {
     })
 };
 
-exports.getArticlesById = (request, response, next) => {
+exports.getArticleById = (request, response, next) => {
     const {article_id} = request.params
     fetchArticleById(article_id)
     .then((article)=>{
         response.status(200).send({article});
+    }).catch(next)
+}
+
+exports.deleteArticleById = (request, response, next) => {
+    const {article_id} = request.params
+    removeArticleById(article_id)
+    .then(()=>{
+        response.status(204).send({})
     }).catch(next)
 }
 
