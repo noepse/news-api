@@ -33,7 +33,8 @@ exports.fetchArticles = async (
   topic,
   sort_by = "created_at",
   order_by = "desc",
-  limit = 10
+  limit = 10,
+  p = 1,
 ) => {
   const queryValues = [];
 
@@ -71,7 +72,18 @@ exports.fetchArticles = async (
     return Promise.reject({ status: 400, msg: "invalid limit query" });
   }
 
-  queryStr += ` LIMIT ${limit} `
+  queryStr += ` LIMIT ${limit}`
+
+  if(isNaN(p))
+  {
+    return Promise.reject({ status: 400, msg: "invalid page query" });
+  }
+
+  const offset = (p - 1) * Number(limit)
+
+  if (offset > 0){
+    queryStr += ` OFFSET ${offset}`
+  }
 
   return db.query(queryStr, queryValues).then((result) => {
     const promises = [];

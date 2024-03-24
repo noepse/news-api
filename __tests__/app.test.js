@@ -224,6 +224,37 @@ test('400: responds with invalid limit query if an invalid limit query is inputt
 });
 });
 
+describe('GET /api/articles/?p', ()=>{
+  test('200: responds with the corresponding page of articles', ()=>{
+      return request(app)
+      .get('/api/articles/?p=2')
+      .expect(200)
+      .then(({body})=>{
+          expect(Array.isArray(body.articles)).toBe(true);
+          expect(body.articles.length).toBe(3);
+          expect(body.total_count).toBe(3);
+          body.articles.forEach((article) => {
+              expect(typeof article.title).toBe("string");
+              expect(typeof article.article_id).toBe("number");
+              expect(typeof article.topic).toBe("string");
+              expect(typeof article.created_at).toBe("string");
+              expect(typeof article.votes).toBe("number");
+              expect(typeof article.article_img_url).toBe("string");
+              expect(typeof article.comment_count).toBe("number");
+              expect(article).not.toHaveProperty("body");
+            });
+      })
+  });
+test('400: responds with invalid page query if an invalid page query is inputted', ()=>{
+  return request(app)
+  .get('/api/articles/?p=notanumber')
+  .expect(400)
+  .then(({ body }) => {
+    expect(body).toEqual({ msg: "invalid page query" });
+  });
+});
+});
+
 describe("GET /api/articles/:article_id", () => {
   test("200: responds with an article object with relevant properties", () => {
     const expectedOutput = {
