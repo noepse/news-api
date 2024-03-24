@@ -296,6 +296,35 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+describe("DELETE /api/articles/:article_id", () => {
+  test("204: deletes the specified article", () => {
+
+    return request(app)
+      .delete("/api/articles/5")
+      .expect(204)
+      .then(()=>{
+        request(app).get("/api/articles/5").expect(404)
+      })
+  });
+  test("400: responds with invalid id if invalid id entered", () => {
+    return request(app)
+      .delete("/api/articles/banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "invalid id" });
+      });
+  });
+  test("404: responds with article not found if valid but non-existent id entered", () => {
+    return request(app)
+      .delete("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "article not found" });
+      });
+  });
+});
+
+
 describe("POST /api/articles", () => {
     test("201: inserts a new article into the db and responds with the posted article", () => {
       const input = {
