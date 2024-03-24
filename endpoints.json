@@ -19,6 +19,7 @@
     "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order, limit, p"],
     "exampleResponse": {
+      "total_count" : 1,
       "articles": [
         {
           "article_id": 1,
@@ -29,6 +30,26 @@
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
           "comment_count": 6
+        },
+        {
+          "article_id": 2,
+          "title": "Football is cool",
+          "topic": "football",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2017-10-30T15:20:48.341Z",
+          "votes": 2,
+          "comment_count": 7
+        },
+        {
+          "article_id": 3,
+          "title": "I love coding",
+          "topic": "coding",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2010-03-30T15:49:12.341Z",
+          "votes": 2,
+          "comment_count": 7
         }
       ]
     }
